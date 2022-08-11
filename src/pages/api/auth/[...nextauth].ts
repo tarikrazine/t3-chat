@@ -4,18 +4,18 @@ import CredentialsProvider from "next-auth/providers/credentials";
 // Prisma adapter for NextAuth, optional and can be removed
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "../../../server/db/client";
-import { env } from "../../../env/server.mjs";
+//import { env } from "../../../env/server.mjs";
 
 export const authOptions: NextAuthOptions = {
   // Include user.id on session
-  callbacks: {
+  /* callbacks: {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
       }
       return session;
     },
-  },
+  }, */
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: [
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 export default NextAuth(authOptions);

@@ -13,7 +13,7 @@ import { getSession } from "next-auth/react";
 
 const ee = new EventEmitter();
 
-export const createContext = async (
+export const createContext: any = async (
   opts?:
     | trpcNext.CreateNextContextOptions
     | NodeHTTPCreateContextFnOptions<IncomingMessage, ws>
@@ -21,8 +21,7 @@ export const createContext = async (
   const req = opts?.req;
   const res = opts?.res;
 
-  const session =
-    req && res && (await getServerSession(nextAuthOptions, req, res));
+  const session = req && res && (await getSession({ req }));
 
   return {
     req,

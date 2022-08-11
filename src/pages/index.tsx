@@ -1,12 +1,20 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
+
+import { customAlphabet } from "nanoid";
+
 import { trpc } from "../utils/trpc";
 
-const Home: NextPage = () => {
-  const { data } = trpc.useQuery(["question.getSecretMessage"]);
+const nanoid = customAlphabet("abcdefghijklmnopqrstuvqxyz0123456789", 4);
 
-  const { mutate } = trpc.useMutation("room.sendMessage");
-  console.log(data);
+const Home: NextPage = () => {
+  const router = useRouter();
+
+  function createRoom() {
+    const roomId = nanoid();
+    router.push(`/rooms/${roomId}`);
+  }
 
   return (
     <>
@@ -17,7 +25,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-        {JSON.stringify(data, null, 2)}
+        <button onClick={createRoom}>Create room</button>
       </main>
     </>
   );
