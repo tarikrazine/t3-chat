@@ -24,8 +24,8 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-        <button onClick={createRoom}>Create room</button>
+      <main className="container mx-auto flex flex-col items-center justify-center h-screen p-4">
+        <button onClick={createRoom}>create chat room</button>
       </main>
     </>
   );

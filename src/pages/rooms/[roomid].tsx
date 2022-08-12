@@ -16,7 +16,27 @@ const Message = ({
   message: Message;
   session: Session;
 }) => {
-  return <div>Message</div>;
+  const baseStyles =
+    "mb-4 text-md w-7/12 p-4 text-gray-700 border border-gray-700 rounded-md";
+
+  const liStyles =
+    message.sender.name === session.user?.name
+      ? baseStyles
+      : baseStyles.concat(" self-end bg-gray-700 text-white");
+
+  return (
+    <li className={liStyles}>
+      <div className="flex">
+        <time>
+          {message.sentAt.toLocaleTimeString("en-AU", {
+            timeStyle: "short",
+          })}{" "}
+          - {message.sender.name}
+        </time>
+      </div>
+      {message.message}
+    </li>
+  );
 };
 
 const RoomPage: NextPage = () => {
@@ -26,16 +46,25 @@ const RoomPage: NextPage = () => {
 
   const { roomid } = router.query;
 
-  const { mutateAsync: sendMessageMutate } =
-    trpc.useMutation("room.sendMessage");
+  const { mutateAsync: sendMessageMutate } = trpc.useMutation([
+    "room.sendMessage",
+  ]);
 
-  trpc.useSubscription(["room.onSendMessage", { roomId: roomid as string }], {
-    onNext(message) {
-      setMessages((m) => {
-        return [...m, message];
-      });
-    },
-  });
+  trpc.useSubscription(
+    [
+      "room.onSendMessage",
+      {
+        roomId: roomid as string,
+      },
+    ],
+    {
+      onNext(mess) {
+        setMessages((m) => {
+          return [...m, mess];
+        });
+      },
+    }
+  );
 
   function onSubmitHandler(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -44,6 +73,8 @@ const RoomPage: NextPage = () => {
       message,
       roomId: roomid as string,
     });
+
+    setMessage("");
   }
 
   const { data: session } = useSession();
@@ -53,22 +84,26 @@ const RoomPage: NextPage = () => {
   }
 
   return (
-    <>
-      <h1>Welcom to room: {roomid}</h1>
-      <ul>
-        {messages.map((m) => (
-          <Message key={m.id} message={m} session={session} />
-        ))}
-      </ul>
-      <form onSubmit={onSubmitHandler}>
+    <div className="flex flex-col h-screen">
+      <div className="flex-1">
+        <ul className="flex flex-col p-4">
+          {messages.map((m) => {
+            return <Message key={m.id} message={m} session={session} />;
+          })}
+        </ul>
+      </div>
+      <form className="flex" onSubmit={onSubmitHandler}>
         <textarea
+          className="black p-2.5 w-full text-gray-700 bg-gray-50 rounded-md border border-gray-700"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="What want you to send"
-        ></textarea>
-        <button type="submit">Send Message</button>
+        />
+        <button className="flex-1 text-white bg-gray-900 p-2.5" type="submit">
+          Send Message
+        </button>
       </form>
-    </>
+    </div>
   );
 };
 

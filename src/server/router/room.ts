@@ -1,4 +1,4 @@
-import trpc from "@trpc/server";
+import * as trpc from "@trpc/server";
 import { randomUUID } from "crypto";
 
 import { createRouter } from "./context";
@@ -24,7 +24,6 @@ export const roomRouter = createRouter()
       };
 
       ctx.ee.emit(Events.SEND_MESSAGE, message);
-
       return message;
     },
   })
